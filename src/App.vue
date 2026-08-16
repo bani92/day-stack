@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+import AppShell from './components/AppShell.vue'
 </script>
 
 <template>
-  <div class="min-h-dvh bg-[var(--daystack-bg)] text-[var(--daystack-text)]">
+  <AppShell>
     <RouterView />
-  </div>
+  </AppShell>
 </template>
