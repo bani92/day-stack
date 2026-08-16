@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, type RouterHistory, type RouteRecordRaw
 import { isDateKey } from '../domain/date-key'
 import TodayView from '../views/TodayView.vue'
 import DailyLogView from '../views/DailyLogView.vue'
+import ArchiveView from '../views/ArchiveView.vue'
 import RoutePlaceholderView from '../views/RoutePlaceholderView.vue'
 
 const routeRecords: RouteRecordRaw[] = [
@@ -31,12 +32,7 @@ const routeRecords: RouteRecordRaw[] = [
   {
     path: '/archive',
     name: 'archive',
-    component: RoutePlaceholderView,
-    props: {
-      eyebrow: '찾기',
-      title: '기록 찾기',
-      description: '날짜별 기록을 탐색하는 화면입니다.',
-    },
+    component: ArchiveView,
   },
   {
     path: '/review',
