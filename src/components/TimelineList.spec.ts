@@ -124,7 +124,24 @@ describe('TimelineList', () => {
     expect(monthButtons[0]?.attributes('aria-expanded')).toBe('true')
     expect(monthButtons[1]?.attributes('aria-expanded')).toBe('false')
     expect(wrapper.find('#timeline-month-2026-08').findAll('a[href^="/day/"]')).toHaveLength(2)
-    expect(wrapper.find('#timeline-month-2026-07').exists()).toBe(false)
+    expect(wrapper.find('#timeline-month-2026-07').exists()).toBe(true)
+    expect(wrapper.find('#timeline-month-2026-07').attributes('hidden')).toBeDefined()
+    expect(wrapper.find('#timeline-month-2026-07').findAll('a[href^="/day/"]')).toHaveLength(0)
+  })
+
+  it('keeps a collapsed month panel in the DOM without rendering its date links', async () => {
+    const wrapper = await mountTimelineList([
+      createSearchResult('2026-08-16' as DateKey, ['done'], '8월 기록'),
+      createSearchResult('2026-07-31' as DateKey, ['next'], '7월 기록'),
+    ])
+
+    const olderMonthButton = wrapper.findAll('button[aria-controls]')[1]
+    const collapsedPanelId = olderMonthButton?.attributes('aria-controls')
+
+    expect(collapsedPanelId).toBe('timeline-month-2026-07')
+    expect(wrapper.find(`#${collapsedPanelId}`).exists()).toBe(true)
+    expect(wrapper.find(`#${collapsedPanelId}`).attributes('hidden')).toBeDefined()
+    expect(wrapper.find(`#${collapsedPanelId}`).findAll('a[href^="/day/"]')).toHaveLength(0)
   })
 
   it('toggles a month button and reveals that month’s date links', async () => {
