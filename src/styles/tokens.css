@@ -1,0 +1,69 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-daystack-bg: var(--daystack-bg);
+  --color-daystack-surface: var(--daystack-surface);
+  --color-daystack-ink: var(--daystack-ink);
+  --color-daystack-text: var(--daystack-text);
+  --color-daystack-muted: var(--daystack-muted);
+  --color-daystack-border: var(--daystack-border);
+  --color-daystack-accent: var(--daystack-accent);
+}
+
+:root {
+  --daystack-bg: #f5f0e8;
+  --daystack-surface: rgba(255, 255, 255, 0.8);
+  --daystack-ink: #17131d;
+  --daystack-text: #342f3c;
+  --daystack-muted: #6d6677;
+  --daystack-border: rgba(23, 19, 29, 0.12);
+  --daystack-accent: #2f5cff;
+
+  color-scheme: light;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.58), transparent 48%),
+    linear-gradient(180deg, #faf7f1 0%, var(--daystack-bg) 100%);
+  color: var(--daystack-text);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--daystack-bg);
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: transparent;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+#app {
+  min-height: 100dvh;
+}
