@@ -62,10 +62,17 @@ describe('TimelineList', () => {
       createSearchResult('2026-08-15' as DateKey, ['learned'], '세로 타임라인은 훑어보기가 쉽다'),
     ])
 
-    expect(wrapper.text()).toContain('2026-08-16')
-    expect(wrapper.text()).toContain('일요일')
-    expect(wrapper.text()).toContain('2026-08-15')
-    expect(wrapper.text()).toContain('토요일')
+    const links = wrapper.findAll('a[href^="/day/"]')
+
+    expect(links).toHaveLength(2)
+    expect(links[0]?.find('time').attributes('datetime')).toBe('2026-08-16')
+    expect(links[0]?.find('time').text()).toBe('2026-08-16')
+    expect(links[0]?.text()).toContain('2026-08-16')
+    expect(links[0]?.text()).toContain('일요일')
+    expect(links[1]?.find('time').attributes('datetime')).toBe('2026-08-15')
+    expect(links[1]?.find('time').text()).toBe('2026-08-15')
+    expect(links[1]?.text()).toContain('2026-08-15')
+    expect(links[1]?.text()).toContain('토요일')
   })
 
   it('renders each result with a day link, prompt labels, excerpt, and touch target classes', async () => {
