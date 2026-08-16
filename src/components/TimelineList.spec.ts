@@ -56,6 +56,18 @@ async function mountTimelineList(results: SearchResult[]) {
 }
 
 describe('TimelineList', () => {
+  it('renders the localized weekday below each date', async () => {
+    const wrapper = await mountTimelineList([
+      createSearchResult('2026-08-16' as DateKey, ['done'], '검색 화면 레이아웃 정리'),
+      createSearchResult('2026-08-15' as DateKey, ['learned'], '세로 타임라인은 훑어보기가 쉽다'),
+    ])
+
+    expect(wrapper.text()).toContain('2026-08-16')
+    expect(wrapper.text()).toContain('일요일')
+    expect(wrapper.text()).toContain('2026-08-15')
+    expect(wrapper.text()).toContain('토요일')
+  })
+
   it('renders each result with a day link, prompt labels, excerpt, and touch target classes', async () => {
     const wrapper = await mountTimelineList([
       createSearchResult('2026-08-16' as DateKey, ['done', 'next'], '검색 화면 레이아웃 정리'),

@@ -18,8 +18,22 @@ const FIELD_LABELS: Record<SearchFieldKey, string> = {
   next: '다음에 이어갈 일',
 }
 
+const weekdayFormatter = new Intl.DateTimeFormat('ko-KR', {
+  weekday: 'long',
+})
+
 function toDayPath(date: DateKey): string {
   return `/day/${date}`
+}
+
+function toLocalDate(date: DateKey): Date {
+  const [year, month, day] = date.split('-').map(Number)
+
+  return new Date(year, month - 1, day)
+}
+
+function formatWeekday(date: DateKey): string {
+  return weekdayFormatter.format(toLocalDate(date))
 }
 </script>
 
@@ -39,12 +53,17 @@ function toDayPath(date: DateKey): string {
             aria-hidden="true"
             class="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-[var(--ds-accent)]"
           />
-          <time
-            :datetime="result.log.date"
-            class="text-sm leading-6 font-medium text-[var(--ds-muted)]"
-          >
-            {{ result.log.date }}
-          </time>
+          <div class="space-y-1">
+            <time
+              :datetime="result.log.date"
+              class="block text-sm leading-6 font-medium text-[var(--ds-muted)]"
+            >
+              {{ result.log.date }}
+            </time>
+            <p class="text-sm leading-5 text-[var(--ds-muted)]">
+              {{ formatWeekday(result.log.date) }}
+            </p>
+          </div>
         </div>
 
         <div class="min-w-0 flex-1 space-y-2">
