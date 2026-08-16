@@ -3,6 +3,7 @@ import { isDateKey } from '../domain/date-key'
 import TodayView from '../views/TodayView.vue'
 import DailyLogView from '../views/DailyLogView.vue'
 import ArchiveView from '../views/ArchiveView.vue'
+import ReviewView from '../views/ReviewView.vue'
 import RoutePlaceholderView from '../views/RoutePlaceholderView.vue'
 
 const routeRecords: RouteRecordRaw[] = [
@@ -37,12 +38,7 @@ const routeRecords: RouteRecordRaw[] = [
   {
     path: '/review',
     name: 'review',
-    component: RoutePlaceholderView,
-    props: {
-      eyebrow: '돌아보기',
-      title: '돌아보기',
-      description: '연속성과 월간 흐름을 살펴보는 화면입니다.',
-    },
+    component: ReviewView,
   },
   {
     path: '/settings',
