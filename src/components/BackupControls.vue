@@ -7,6 +7,11 @@ const emit = defineEmits<{
 }>()
 
 const fileError = ref<string | null>(null)
+const fileInput = ref<HTMLInputElement | null>(null)
+
+function openFilePicker() {
+  fileInput.value?.click()
+}
 
 function handleFileChange(event: Event) {
   fileError.value = null
@@ -49,16 +54,19 @@ function handleFileChange(event: Event) {
         JSON 내보내기
       </button>
 
-      <label
-        class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-[8px] border border-[var(--ds-divider)] px-4 py-2 text-sm font-medium text-[var(--ds-ink)] transition-colors hover:bg-[var(--ds-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ds-accent)]"
-        for="backup-file"
+      <button
+        class="inline-flex min-h-11 items-center justify-center rounded-[8px] border border-[var(--ds-divider)] px-4 py-2 text-sm font-medium text-[var(--ds-ink)] transition-colors hover:bg-[var(--ds-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ds-accent)]"
+        data-testid="import-trigger"
+        type="button"
+        @click="openFilePicker"
       >
         JSON 가져오기
-      </label>
+      </button>
       <input
         id="backup-file"
         accept="application/json,.json"
         class="sr-only"
+        ref="fileInput"
         type="file"
         @change="handleFileChange"
       />

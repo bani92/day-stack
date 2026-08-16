@@ -29,7 +29,7 @@ async function handleExport() {
   document.body.append(anchor)
   anchor.click()
   anchor.remove()
-  URL.revokeObjectURL(objectUrl)
+  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0)
   status.value = '데이터를 내보냈습니다.'
 }
 

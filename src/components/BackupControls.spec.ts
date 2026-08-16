@@ -16,6 +16,19 @@ describe('BackupControls', () => {
     expect(wrapper.emitted('export')).toEqual([[]])
   })
 
+  it('opens the file picker from a keyboard-focusable import button', async () => {
+    const wrapper = mount(BackupControls)
+    const input = wrapper.get('input[type="file"]')
+    const click = vi.spyOn(input.element as HTMLInputElement, 'click')
+    const importButton = wrapper.get('button[data-testid="import-trigger"]')
+
+    expect(importButton.classes()).toContain('focus-visible:outline-2')
+
+    await importButton.trigger('click')
+
+    expect(click).toHaveBeenCalledOnce()
+  })
+
   it('reads a selected JSON file and emits its serialized contents', async () => {
     const serialized = '{"version":1,"logs":{}}'
     const readAsText = vi.fn(function (this: FileReaderHarness, file: File) {

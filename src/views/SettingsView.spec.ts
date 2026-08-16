@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { createMemoryHistory } from 'vue-router'
-import { nextTick, reactive } from 'vue'
+import { reactive } from 'vue'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import BackupControls from '../components/BackupControls.vue'
@@ -53,6 +53,7 @@ describe('SettingsView', () => {
   afterEach(() => {
     mockUseAppDailyLogStore.mockReset()
     vi.restoreAllMocks()
+    vi.useRealTimers()
   })
 
   it('loads all logs, renders one main heading, and replaces the settings placeholder route', async () => {
@@ -67,10 +68,11 @@ describe('SettingsView', () => {
     expect(router.currentRoute.value.matched[0]?.components?.default).toBe(SettingsView)
   })
 
-  it('downloads the store snapshot from the export event', async () => {
+  it('keeps the download URL until the browser has started the download', async () => {
     const store = createStoreFixture()
     const createObjectURL = vi.fn(() => 'blob:daystack')
     const revokeObjectURL = vi.fn()
+    vi.useFakeTimers()
     vi.stubGlobal('URL', {
       ...URL,
       createObjectURL,
@@ -87,10 +89,14 @@ describe('SettingsView', () => {
     expect(click).toHaveBeenCalledOnce()
     const anchor = click.mock.instances[0] as HTMLAnchorElement
     expect(anchor.download).toMatch(/^daystack-backup-\d{4}-\d{2}-\d{2}\.json$/)
+    expect(revokeObjectURL).not.toHaveBeenCalled()
+
+    vi.runAllTimers()
+
     expect(revokeObjectURL).toHaveBeenCalledWith('blob:daystack')
   })
 
-  it('imports a snapshot and reports success or store errors', async () => {
+  it('imports a valid snapshot and reports success', async () => {
     const store = createStoreFixture()
     const { wrapper } = await mountSettingsView(store)
     const controls = wrapper.findComponent(BackupControls)
@@ -100,10 +106,20 @@ describe('SettingsView', () => {
 
     expect(store.importSnapshot).toHaveBeenCalledWith('{"version":1,"logs":{}}')
     expect(wrapper.text()).toContain('데이터를 가져왔습니다.')
+  })
 
-    store.error = 'Failed to import snapshot: invalid JSON.'
-    await nextTick()
+  it('reports the actual store error when importing fails', async () => {
+    const store = createStoreFixture()
+    store.importSnapshot.mockImplementation(async () => {
+      store.error = 'Failed to import snapshot: invalid JSON.'
+    })
+    const { wrapper } = await mountSettingsView(store)
+
+    wrapper.findComponent(BackupControls).vm.$emit('import', '{broken json')
+    await flushPromises()
+
     expect(wrapper.get('[role="alert"]').text()).toContain('Failed to import snapshot: invalid JSON.')
+    expect(wrapper.text()).not.toContain('데이터를 가져왔습니다.')
   })
 
   it('clears all data only after confirmation', async () => {
@@ -119,5 +135,21 @@ describe('SettingsView', () => {
     await wrapper.get('button[data-testid="clear-all"]').trigger('click')
     expect(store.clearAll).toHaveBeenCalledOnce()
     expect(wrapper.text()).toContain('모든 기록을 삭제했습니다.')
+  })
+
+  it('reports the store error when clearing all data fails', async () => {
+    const store = createStoreFixture()
+    store.clearAll.mockImplementation(async () => {
+      store.error = 'Failed to clear all logs.'
+      return false
+    })
+    const { wrapper } = await mountSettingsView(store)
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+
+    await wrapper.get('button[data-testid="clear-all"]').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.get('[role="alert"]').text()).toContain('Failed to clear all logs.')
+    expect(wrapper.text()).not.toContain('모든 기록을 삭제했습니다.')
   })
 })
