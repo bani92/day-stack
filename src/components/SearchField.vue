@@ -34,7 +34,7 @@ function clear() {
       />
 
       <button
-        v-if="props.modelValue.trim() !== ''"
+        v-if="props.modelValue !== ''"
         aria-label="검색어 지우기"
         class="min-h-11 shrink-0 rounded-[8px] px-2 text-sm font-medium text-[var(--ds-muted)] transition-colors hover:text-[var(--ds-ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ds-accent)]"
         type="button"

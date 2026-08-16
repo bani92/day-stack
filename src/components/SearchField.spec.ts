@@ -46,4 +46,20 @@ describe('SearchField', () => {
 
     expect(wrapper.emitted('update:modelValue')).toEqual([['']])
   })
+
+  it('shows a clear action for a whitespace-only query and clears the model value', async () => {
+    const wrapper = mount(SearchField, {
+      props: {
+        modelValue: '   ',
+      },
+    })
+
+    const clearButton = wrapper.get('button[type="button"]')
+
+    expect(clearButton.text()).toContain('지우기')
+
+    await clearButton.trigger('click')
+
+    expect(wrapper.emitted('update:modelValue')).toEqual([['']])
+  })
 })
