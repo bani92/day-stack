@@ -17,6 +17,7 @@ describe('SearchField', () => {
     expect(label.text()).toContain('기록 검색')
     expect(input.attributes('type')).toBe('search')
     expect(input.attributes('autocomplete')).toBe('off')
+    expect(input.attributes('placeholder')).toBe('기록 내용을 검색해보세요')
 
     await input.setValue('타임라인')
 

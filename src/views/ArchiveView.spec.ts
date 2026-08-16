@@ -170,6 +170,21 @@ describe('ArchiveView', () => {
     expect(wrapper.get('a[href="/today"]').text()).toContain('/today')
   })
 
+  it('hides the empty archive state on load error and retries while preserving the query', async () => {
+    const store = createStoreFixture()
+    const { wrapper } = await mountArchiveView(store)
+
+    await wrapper.get('#archive-search').setValue('Vue')
+    store.error = '기록을 불러오지 못했습니다.'
+    await flushPromises()
+
+    expect(wrapper.text()).not.toContain('아직 기록이 없습니다.')
+    expect(wrapper.get('[role="alert"]').text()).toContain('기록을 불러오지 못했습니다.')
+    await getButtonByText(wrapper, '다시 불러오기').trigger('click')
+    expect(store.loadAll).toHaveBeenCalledTimes(2)
+    expect((wrapper.get('#archive-search').element as HTMLInputElement).value).toBe('Vue')
+  })
+
   it('renders the store error in an alert region and preserves the current query', async () => {
     const store = createStoreFixture([
       createLog({

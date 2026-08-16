@@ -20,6 +20,10 @@ function clearQuery() {
   query.value = ''
 }
 
+function retryLoadAll() {
+  void store.loadAll()
+}
+
 onMounted(() => {
   void store.loadAll()
 })
@@ -42,13 +46,23 @@ onMounted(() => {
 
       <SearchField v-model="query" />
 
-      <p
+      <section
         v-if="store.error"
-        role="alert"
-        class="rounded-[8px] border border-[var(--ds-divider)] bg-[var(--ds-surface)] px-4 py-3 text-sm leading-6 text-[var(--ds-ink)]"
+        class="space-y-3 rounded-[8px] border border-[var(--ds-divider)] bg-[var(--ds-surface)] px-4 py-4"
       >
-        {{ store.error }}
-      </p>
+        <p role="alert" class="text-sm leading-6 text-[var(--ds-ink)]">
+          {{ store.error }}
+        </p>
+        <div>
+          <button
+            class="min-h-11 rounded-[8px] border border-[var(--ds-divider)] px-4 py-2 text-sm font-medium text-[var(--ds-ink)] transition-colors hover:bg-[var(--ds-accent-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ds-accent)]"
+            type="button"
+            @click="retryLoadAll"
+          >
+            다시 불러오기
+          </button>
+        </div>
+      </section>
 
       <p
         v-if="store.isLoading"
@@ -58,7 +72,7 @@ onMounted(() => {
       </p>
 
       <section
-        v-else-if="!hasSavedLogs"
+        v-else-if="!store.error && !hasSavedLogs"
         class="space-y-4 border-y border-[var(--ds-divider)] py-8 text-center"
       >
         <h2 class="text-lg font-semibold text-[var(--ds-ink)]">아직 기록이 없습니다.</h2>

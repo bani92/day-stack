@@ -28,7 +28,7 @@ function clear() {
         :value="props.modelValue"
         autocomplete="off"
         class="min-h-11 w-full border-0 bg-transparent py-3 text-base text-[var(--ds-ink)] outline-none placeholder:text-[var(--ds-muted)]"
-        placeholder="날짜나 기록 내용을 검색해보세요"
+        placeholder="기록 내용을 검색해보세요"
         type="search"
         @input="updateValue"
       />
