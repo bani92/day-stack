@@ -12,6 +12,7 @@
 
 - 검색 대상 순서는 `done → learned → blocked → next`다.
 - 빈 검색어는 모든 로그를 반환한다.
+- 빈 검색어에서도 `matchedFields`는 비어 있지 않은 프롬프트를 `done → learned → blocked → next` 순서로 담고, `excerpt`는 첫 번째 비어 있지 않은 프롬프트에서 만든다.
 - 결과는 `date` 내림차순으로 정렬한다.
 - `excerpt`는 매칭된 첫 번째 필드의 내용을 trim하고 최대 120자로 줄인다. 120자를 넘기면 `…`을 덧붙인다.
 - `ArchiveView`는 `useAppDailyLogStore` adapter만 사용한다. `localStorage`나 Repository 구현체를 화면에서 직접 import하지 않는다.
