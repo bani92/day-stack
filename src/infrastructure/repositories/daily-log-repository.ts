@@ -6,6 +6,7 @@ export interface DailyLogRepository {
   list(): Promise<DailyLog[]>
   save(input: DailyLogInput & { date: DateKey }): Promise<DailyLog>
   remove(date: DateKey): Promise<void>
+  clear(): Promise<void>
   exportSnapshot(): Promise<string>
   importSnapshot(serialized: string): Promise<void>
 }

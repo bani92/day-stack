@@ -2,6 +2,7 @@ import { createMemoryHistory } from 'vue-router'
 import { describe, expect, it } from 'vitest'
 
 import { createAppRouter } from './index'
+import SettingsView from '../views/SettingsView.vue'
 
 describe('createAppRouter', () => {
   it('redirects the root route to today', async () => {
@@ -31,5 +32,11 @@ describe('createAppRouter', () => {
 
     await router.push('/day/2026-08-16')
     expect(router.currentRoute.value.fullPath).toBe('/day/2026-08-16')
+  })
+
+  it('maps settings to SettingsView', () => {
+    const router = createAppRouter(createMemoryHistory())
+
+    expect(router.getRoutes().find(route => route.name === 'settings')?.components?.default).toBe(SettingsView)
   })
 })

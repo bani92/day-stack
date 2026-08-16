@@ -11,6 +11,7 @@ interface RepositoryFixture {
     list(): Promise<DailyLog[]>
     save(input: DailyLogInput & { date: DateKey }): Promise<DailyLog>
     remove(date: DateKey): Promise<void>
+    clear(): Promise<void>
     exportSnapshot(): Promise<string>
     importSnapshot(serialized: string): Promise<void>
   }
@@ -148,6 +149,23 @@ describe('LocalStorageDailyLogRepository', () => {
     await repository.remove(asDateKey('2026-08-16'))
 
     await expect(repository.get(asDateKey('2026-08-16'))).resolves.toBeNull()
+    await expect(repository.list()).resolves.toEqual([])
+  })
+
+  it('clears all saved logs and removes the persisted snapshot', async () => {
+    const { repository, storage } = await createRepositoryFixture()
+
+    await repository.save({
+      date: asDateKey('2026-08-16'),
+      done: 'Remove everything',
+      learned: '',
+      blocked: '',
+      next: '',
+    })
+
+    await repository.clear()
+
+    expect(storage.get(STORAGE_KEY)).toBeNull()
     await expect(repository.list()).resolves.toEqual([])
   })
 

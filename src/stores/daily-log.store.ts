@@ -147,6 +147,38 @@ export function createDailyLogStore(repository: DailyLogRepository) {
           this.isLoading = false
         }
       },
+
+      async exportSnapshot(): Promise<string | null> {
+        this.isLoading = true
+        this.error = null
+
+        try {
+          return await repository.exportSnapshot()
+        } catch (error) {
+          this.error = toErrorMessage(error)
+          return null
+        } finally {
+          this.isLoading = false
+        }
+      },
+
+      async clearAll(): Promise<boolean> {
+        this.isLoading = true
+        this.error = null
+
+        try {
+          await repository.clear()
+          this.logs = []
+          this.currentLog = null
+          this.lastSavedAt = null
+          return true
+        } catch (error) {
+          this.error = toErrorMessage(error)
+          return false
+        } finally {
+          this.isLoading = false
+        }
+      },
     },
   })
 }

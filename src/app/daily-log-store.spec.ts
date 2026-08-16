@@ -41,6 +41,7 @@ function createRepository(log: DailyLog): DailyLogRepository {
       })
     },
     async remove() {},
+    async clear() {},
     async exportSnapshot() {
       return JSON.stringify({ version: 1, logs: { [log.date]: log } })
     },

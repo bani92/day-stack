@@ -19,6 +19,7 @@ interface RepositoryFixture {
     }>
     remove: DateKey[]
     importSnapshot: string[]
+    clear: number
   }
   repository: DailyLogRepository
 }
@@ -58,6 +59,7 @@ function createRepositoryFixture(options: {
   save?: (input: DailyLogInput & { date: DateKey }) => Promise<DailyLog>
   remove?: (date: DateKey) => Promise<void>
   importSnapshot?: (serialized: string) => Promise<void>
+  clear?: () => Promise<void>
 } = {}): RepositoryFixture {
   const logs = new Map((options.initialLogs ?? []).map(log => [log.date, cloneLog(log)]))
   const calls: RepositoryFixture['calls'] = {
@@ -66,6 +68,7 @@ function createRepositoryFixture(options: {
     save: [],
     remove: [],
     importSnapshot: [],
+    clear: 0,
   }
 
   const repository: DailyLogRepository = {
@@ -132,6 +135,15 @@ function createRepositoryFixture(options: {
       for (const [date, log] of Object.entries(parsed.logs)) {
         logs.set(asDateKey(date), cloneLog(log))
       }
+    },
+    async clear() {
+      calls.clear += 1
+
+      if (options.clear) {
+        return options.clear()
+      }
+
+      logs.clear()
     },
   }
 
@@ -465,6 +477,50 @@ describe('createDailyLogStore', () => {
     expect(store.error).toBe('import failed')
     expect(store.currentLog).toEqual(beforeCurrentLog)
     expect(store.logs).toEqual(beforeLogs)
+  })
+
+  it('exports a snapshot and clears all store state after repository clear succeeds', async () => {
+    const targetDate = asDateKey('2026-08-16')
+    const { calls, repository } = createRepositoryFixture({
+      initialLogs: [createLog({ date: targetDate, done: 'Clear me' })],
+    })
+    const useStore = createDailyLogStore(repository)
+    const store = useStore()
+
+    await store.loadDate(targetDate)
+    await store.loadAll()
+    const snapshot = await store.exportSnapshot()
+    const cleared = await store.clearAll()
+
+    expect(snapshot).toContain('Clear me')
+    expect(cleared).toBe(true)
+    expect(calls.clear).toBe(1)
+    expect(store.logs).toEqual([])
+    expect(store.currentLog).toBeNull()
+    expect(store.error).toBeNull()
+  })
+
+  it('keeps store data when clearAll fails', async () => {
+    const targetDate = asDateKey('2026-08-16')
+    const existingLog = createLog({ date: targetDate, done: 'Keep me' })
+    const { calls, repository } = createRepositoryFixture({
+      initialLogs: [existingLog],
+      clear: async () => {
+        throw new Error('clear failed')
+      },
+    })
+    const useStore = createDailyLogStore(repository)
+    const store = useStore()
+
+    await store.loadDate(targetDate)
+    await store.loadAll()
+    const cleared = await store.clearAll()
+
+    expect(cleared).toBe(false)
+    expect(calls.clear).toBe(1)
+    expect(store.logs).toEqual([existingLog])
+    expect(store.currentLog).toEqual(existingLog)
+    expect(store.error).toBe('clear failed')
   })
 
   it('clears loading and stores the error when loadAll fails', async () => {

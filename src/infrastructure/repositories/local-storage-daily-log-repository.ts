@@ -152,6 +152,10 @@ export class LocalStorageDailyLogRepository implements DailyLogRepository {
     this.writeSnapshot(snapshot)
   }
 
+  async clear(): Promise<void> {
+    this.storage.remove(STORAGE_KEY)
+  }
+
   async exportSnapshot(): Promise<string> {
     return JSON.stringify(this.readSnapshot())
   }

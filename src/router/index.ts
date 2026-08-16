@@ -4,7 +4,7 @@ import TodayView from '../views/TodayView.vue'
 import DailyLogView from '../views/DailyLogView.vue'
 import ArchiveView from '../views/ArchiveView.vue'
 import ReviewView from '../views/ReviewView.vue'
-import RoutePlaceholderView from '../views/RoutePlaceholderView.vue'
+import SettingsView from '../views/SettingsView.vue'
 
 const routeRecords: RouteRecordRaw[] = [
   {
@@ -43,12 +43,7 @@ const routeRecords: RouteRecordRaw[] = [
   {
     path: '/settings',
     name: 'settings',
-    component: RoutePlaceholderView,
-    props: {
-      eyebrow: '설정',
-      title: '설정',
-      description: '저장과 백업 같은 앱 설정을 두는 자리입니다.',
-    },
+    component: SettingsView,
   },
 ]
 
