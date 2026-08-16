@@ -99,10 +99,9 @@ npx vitest run src/domain/search-logs.spec.ts src/domain
 
 ## 해석 메모
 
-- brief는 빈 검색어에서 `matchedFields`와 `excerpt`의 정확한 세부 규칙을 별도로 명시하지 않았다.
-- 구현에서는 빈 검색어일 때도 결과를 유용하게 만들기 위해, 비어 있지 않은 필드만 `matchedFields`에 담고 그 첫 필드로 `excerpt`를 만들었다.
-- 이 판단은 brief의 명시 범위를 넘는 구조 변경 없이 UI 친화적인 최소 해석으로 유지했다.
-- 리뷰 후에는 이 해석을 구현 변경 없이 behavior test로 고정했다.
+- 초기 brief 단계에서는 빈 검색어에서 `matchedFields`와 `excerpt`의 세부 규칙이 충분히 명시되지 않아, 구현에서는 전체 타임라인 UX에 맞춰 비어 있지 않은 필드만 `matchedFields`에 담고 그 첫 필드로 `excerpt`를 만드는 해석을 적용했다.
+- 이후 리뷰를 거치면서 brief와 spec에 이 규칙이 명시적으로 반영됐다.
+- 후속 behavior test는 이 규칙을 구현 변경 없이 고정해, 빈 검색어에서도 non-empty fields 순서와 첫 non-empty field 기반 `excerpt`가 유지되도록 했다.
 
 ## 미수행 항목
 
