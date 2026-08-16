@@ -85,6 +85,37 @@ describe('search-logs', () => {
     expect(logs.map(log => log.date)).toEqual(originalDates)
   })
 
+  it('uses non-empty fields for blank-query metadata and still includes fully blank logs', async () => {
+    const { searchLogs } = await import('./search-logs')
+    const logs = [
+      createLog('2026-08-16', {
+        done: '   ',
+        learned: '  First visible field  ',
+        blocked: '',
+        next: 'Second visible field',
+      }),
+      createLog('2026-08-15', {
+        done: ' ',
+        learned: '',
+        blocked: '   ',
+        next: '',
+      }),
+    ]
+
+    expect(searchLogs(logs, '')).toEqual([
+      expect.objectContaining({
+        log: logs[0],
+        matchedFields: ['learned', 'next'],
+        excerpt: 'First visible field',
+      }),
+      expect.objectContaining({
+        log: logs[1],
+        matchedFields: [],
+        excerpt: '',
+      }),
+    ])
+  })
+
   it('returns an empty list when nothing matches the query', async () => {
     const { searchLogs } = await import('./search-logs')
     const logs = [
