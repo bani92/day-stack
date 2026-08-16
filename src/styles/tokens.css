@@ -20,6 +20,14 @@
   --ds-accent-soft: #e5ece7;
   --ds-danger: #a33f36;
   --ds-focus: #245db2;
+  --ds-field-done-bg: #e5ece7;
+  --ds-field-done-text: #4f6658;
+  --ds-field-learned-bg: #e7ebed;
+  --ds-field-learned-text: #53656d;
+  --ds-field-blocked-bg: #eee9dc;
+  --ds-field-blocked-text: #7a6948;
+  --ds-field-next-bg: #ece9e3;
+  --ds-field-next-text: #655f55;
 
   --daystack-bg: var(--ds-canvas);
   --daystack-surface: var(--ds-surface);
@@ -41,6 +49,36 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.field-label {
+  display: inline-flex;
+  min-height: 1.75rem;
+  align-items: center;
+  border-left: 2px solid currentColor;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  line-height: 1.25rem;
+}
+
+.field-label--done {
+  background: var(--ds-field-done-bg);
+  color: var(--ds-field-done-text);
+}
+
+.field-label--learned {
+  background: var(--ds-field-learned-bg);
+  color: var(--ds-field-learned-text);
+}
+
+.field-label--blocked {
+  background: var(--ds-field-blocked-bg);
+  color: var(--ds-field-blocked-text);
+}
+
+.field-label--next {
+  background: var(--ds-field-next-bg);
+  color: var(--ds-field-next-text);
 }
 
 *,
