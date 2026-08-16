@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { createMemoryHistory } from 'vue-router'
-import { reactive } from 'vue'
+import { nextTick, reactive } from 'vue'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { createAppRouter } from '../router'
@@ -68,6 +68,19 @@ async function mountArchiveView(store = createStoreFixture()) {
   return { wrapper, router, store }
 }
 
+function getButtonByText(
+  wrapper: Awaited<ReturnType<typeof mountArchiveView>>['wrapper'],
+  text: string,
+) {
+  const button = wrapper.findAll('button').find(candidate => candidate.text().trim() === text)
+
+  if (!button) {
+    throw new Error(`Button not found: ${text}`)
+  }
+
+  return button
+}
+
 describe('ArchiveView', () => {
   afterEach(() => {
     mockUseAppDailyLogStore.mockReset()
@@ -130,9 +143,24 @@ describe('ArchiveView', () => {
     await wrapper.get('#archive-search').setValue('없는 키워드')
 
     expect(wrapper.text()).toContain('검색 결과가 없습니다.')
-    await wrapper.get('button').trigger('click')
+    await getButtonByText(wrapper, '전체 기록 보기').trigger('click')
     expect((wrapper.get('#archive-search').element as HTMLInputElement).value).toBe('')
     expect(wrapper.text()).toContain('전체 기록')
+  })
+
+  it('renders the loading message while the store is loading logs', async () => {
+    const store = createStoreFixture([
+      createLog({
+        date: asDateKey('2026-08-16'),
+        done: '로딩 중인 기록',
+      }),
+    ])
+
+    const { wrapper } = await mountArchiveView(store)
+    store.isLoading = true
+    await nextTick()
+
+    expect(wrapper.text()).toContain('기록을 불러오는 중입니다.')
   })
 
   it('shows the empty archive message with a link to today when there are no saved logs', async () => {
