@@ -19,8 +19,8 @@ export interface DayStackAppShell {
 export function createDayStackApp(options: CreateDayStackAppOptions = {}): DayStackAppShell {
   const app = createApp(AppRoot)
   const pinia = createPinia()
-  const router = createAppRouter(options.history)
   const services = createAppServices()
+  const router = createAppRouter(options.history, { authGateway: services.authGateway })
 
   app.use(pinia)
   app.use(router)

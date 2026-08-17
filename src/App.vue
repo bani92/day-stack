@@ -4,7 +4,10 @@ import AppShell from './components/AppShell.vue'
 </script>
 
 <template>
-  <AppShell>
-    <RouterView />
-  </AppShell>
+  <RouterView v-slot="{ Component, route }">
+    <AppShell v-if="route.meta.requiresAuth">
+      <component :is="Component" />
+    </AppShell>
+    <component :is="Component" v-else />
+  </RouterView>
 </template>

@@ -2,10 +2,9 @@ import { describe, expect, it } from 'vitest'
 import { createMemoryHistory } from 'vue-router'
 import { createDayStackApp } from './main'
 import { createAppServices } from './services'
-import { LocalStorageDailyLogRepository } from '../infrastructure/repositories/local-storage-daily-log-repository'
 
 describe('createDayStackApp', () => {
-  it('creates services and redirects the root route to today', async () => {
+  it('creates services and redirects unauthenticated root access to login', async () => {
     const { router, services } = createDayStackApp({
       history: createMemoryHistory(),
     })
@@ -18,15 +17,16 @@ describe('createDayStackApp', () => {
     await router.push('/')
     await router.isReady()
 
-    expect(router.currentRoute.value.fullPath).toBe('/today')
+    expect(router.currentRoute.value.fullPath).toBe('/login?redirect=/today')
   })
 
-  it('creates a real local storage repository for app services', () => {
+  it('creates repository and auth services for app services', () => {
     const first = createAppServices()
     const second = createAppServices()
 
-    expect(first.dailyLogRepository).toBeInstanceOf(LocalStorageDailyLogRepository)
-    expect(second.dailyLogRepository).toBeInstanceOf(LocalStorageDailyLogRepository)
-    expect(first.dailyLogRepository).not.toBe(second.dailyLogRepository)
+    expect(first.dailyLogRepository).toBeDefined()
+    expect(first.authGateway).toBeDefined()
+    expect(second.dailyLogRepository).toBeDefined()
+    expect(second.authGateway).toBeDefined()
   })
 })

@@ -62,6 +62,12 @@ describe('useAppDailyLogStore', () => {
     })
     const services: AppServices = {
       dailyLogRepository: createRepository(targetLog),
+      authGateway: {
+        async getCurrentUser() {
+          return null
+        },
+        async signIn() {},
+      },
     }
     const Host = defineComponent({
       setup() {
