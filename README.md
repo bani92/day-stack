@@ -16,9 +16,9 @@ DayStack는 Todo가 아니라 Daily Log를 기록하는 Vue 3 앱입니다.
 
 - 로컬 `npm run test`: 19개 파일, 95개 테스트 통과
 - 로컬 `npm run build`: 통과
-- 기존 Production 루트 `/`: 정상
-- 기존 Production에서 하위 경로 직접 접근(`/today`, `/archive`, `/review`, `/settings`, `/day/:date`): `404 NOT_FOUND`
-- `vercel.json` 반영 후 GitHub push 및 Vercel 재배포가 필요함
+- Production 루트 `/`: 정상
+- Production 하위 경로 직접 접근(`/today`, `/archive`, `/review`, `/settings`, `/day/:date`): 정상
+- `vercel.json` 반영 후 Vercel 재배포 완료
 
 ## 실행
 
