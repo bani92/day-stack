@@ -7,8 +7,8 @@
 - Vue Router
 - Tailwind CSS v4 + 소량의 일반 CSS
 - Vitest + Vue Test Utils + jsdom
-- 1차 저장소: localStorage
-- 2차 저장소: Supabase
+- 주 저장소: Supabase Postgres + Supabase Auth + RLS
+- 테스트·환경변수 미설정 fallback: localStorage
 - 배포: Vercel
 
 UI 컴포넌트 라이브러리는 추가하지 않는다. 신규 프로젝트에서 PrimeVue나 Element Plus를 넣으면 DayStack의 문서형 디자인과 초기 구조가 불필요하게 커진다.
@@ -22,8 +22,12 @@ Pinia Store
         ↓
 DailyLogRepository
         ↓
-LocalStorageDailyLogRepository (1차)
-SupabaseDailyLogRepository    (2차)
+SupabaseDailyLogRepository (Production)
+LocalStorageDailyLogRepository (fallback/test)
+
+Supabase Auth session
+        ↓
+Router auth guard + RLS (user_id = auth.uid())
 ```
 
 `domain`은 Vue, Pinia, localStorage, Supabase를 import하지 않는다. View와 Component는 저장소 구현체를 직접 호출하지 않는다. 저장소 차이는 `infrastructure` 내부에만 둔다.
@@ -40,13 +44,19 @@ src/
 │  ├─ date-key.ts
 │  └─ statistics.ts
 ├─ infrastructure/
+│  ├─ auth/
+│  │  ├─ auth-gateway.ts
+│  │  └─ auth-gateway.spec.ts
+│  ├─ supabase/
+│  │  └─ client.ts
 │  ├─ storage/
 │  │  ├─ key-value-storage.ts
 │  │  ├─ browser-local-storage.ts
 │  │  └─ memory-storage.ts
 │  └─ repositories/
 │     ├─ daily-log-repository.ts
-│     └─ local-storage-daily-log-repository.ts
+│     ├─ local-storage-daily-log-repository.ts
+│     └─ supabase-daily-log-repository.ts
 ├─ stores/
 │  └─ daily-log.store.ts
 ├─ router/
@@ -108,10 +118,10 @@ Pinia Store는 `selectedDate`, `currentLog`, `logs`, `isLoading`, `isSaving`, `e
 /day/:date         → 특정 날짜 기록
 /archive           → 찾기/검색
 /review            → 돌아보기
-/settings          → JSON 백업·복원 및 로컬 데이터 관리
+/settings          → JSON 백업·복원 및 사용자 데이터 관리
 ```
 
-`/login`, `/auth/callback`은 Supabase 단계에서 추가한다. `/day/:date`는 `YYYY-MM-DD` 형식이 아니면 `/today`로 되돌린다.
+`/login`은 공개 경로이고 나머지 기록 경로는 Supabase session이 없으면 `/login`으로 이동한다. `/day/:date`는 `YYYY-MM-DD` 형식이 아니면 `/today`로 되돌린다.
 
 ## 6. 사용자 실행 명령
 
@@ -122,11 +132,6 @@ npm create vite@latest . -- --template vue-ts
 npm install pinia vue-router
 npm install tailwindcss @tailwindcss/vite
 npm install -D vitest jsdom @vue/test-utils
-```
-
-Supabase 단계에서만 다음을 실행한다.
-
-```powershell
 npm install @supabase/supabase-js
 ```
 
@@ -152,7 +157,7 @@ TDD 순서로 DateKey/로그 검증, 통계 함수, MemoryStorage, Repository �
 
 ### 3단계: 데이터 안전장치와 QA
 
-JSON 내보내기/가져오기, 초기화 전 확인, localStorage 실패 대응, 접근성 점검, 모바일 브라우저 검증을 진행한다.
+JSON 내보내기/가져오기, 초기화 전 확인, 저장소 오류 대응, 접근성 점검, 모바일 브라우저 검증을 진행한다.
 
 완료 기준: 데이터 복원과 저장 실패 시 입력 보존이 확인된다.
 
@@ -160,9 +165,13 @@ JSON 내보내기/가져오기, 초기화 전 확인, localStorage 실패 대응
 
 Vercel에 Preview를 배포하고 SPA history fallback, 직접 URL 접근, 새로고침, 모바일 화면을 확인한 뒤 Production에 배포한다.
 
+상태: 완료. Production URL은 `https://day-stack-pearl.vercel.app`이다.
+
 ### 5단계: Supabase 전환
 
-검증 기준을 충족하면 사용자가 Supabase 프로젝트·환경변수·DB migration을 준비하고, 에이전트가 Auth·RLS·Repository adapter·명시적 local import를 추가한다.
+사용자가 Supabase 프로젝트·환경변수·DB migration을 준비했고, Auth·RLS·Repository adapter·로그인 가드·JSON 백업 연동을 추가했다.
+
+상태: 완료. 실제 로그인, 기록 저장, Supabase Table Editor 저장 결과를 확인했다.
 
 ## 8. 역할 분담
 

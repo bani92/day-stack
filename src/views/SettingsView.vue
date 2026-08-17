@@ -71,7 +71,7 @@ onMounted(() => {
           데이터를 안전하게 보관하세요.
         </h1>
         <p class="text-base leading-7 text-[var(--ds-muted)]">
-          DayStack의 기록은 현재 사용 중인 브라우저에만 저장됩니다. 정기적으로 JSON 백업을 내려받아 보관하세요.
+          로그인한 계정의 기록은 Supabase에 저장되고, RLS 정책에 따라 본인 기록만 접근할 수 있습니다. 필요할 때 JSON 백업을 내려받아 보관하세요.
         </p>
       </div>
 
@@ -80,7 +80,7 @@ onMounted(() => {
       <section class="space-y-3 border-t border-[var(--ds-divider)] pt-6">
         <h2 class="text-base font-semibold text-[var(--ds-ink)]">데이터 초기화</h2>
         <p class="text-sm leading-6 text-[var(--ds-muted)]">
-          이 브라우저에 저장된 모든 기록을 삭제합니다. 삭제한 기록은 백업 파일 없이는 되돌릴 수 없습니다.
+          현재 로그인한 계정의 모든 기록을 Supabase에서 삭제합니다. 삭제한 기록은 백업 파일 없이는 되돌릴 수 없습니다.
         </p>
         <button
           class="inline-flex min-h-11 items-center justify-center rounded-[8px] border border-[var(--ds-danger)] px-4 py-2 text-sm font-medium text-[var(--ds-danger)] transition-colors hover:bg-[var(--ds-danger)]/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ds-danger)]"

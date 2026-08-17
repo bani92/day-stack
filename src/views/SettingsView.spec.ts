@@ -65,6 +65,8 @@ describe('SettingsView', () => {
     expect(wrapper.find('main').exists()).toBe(true)
     expect(wrapper.findAll('h1')).toHaveLength(1)
     expect(wrapper.get('h1').text()).toBe('데이터를 안전하게 보관하세요.')
+    expect(wrapper.text()).toContain('Supabase')
+    expect(wrapper.text()).not.toContain('현재 사용 중인 브라우저에만 저장됩니다.')
     expect(router.currentRoute.value.matched[0]?.components?.default).toBe(SettingsView)
   })
 
